@@ -1,4 +1,4 @@
-import 'package:dragon_ball_app/app/features/home/pages/home_page.dart';
+import 'package:dragon_ball_app/app/features/characters/pages/home_page.dart';
 import 'package:flutter/material.dart';
 import 'app/core/theme/app_theme.dart';
 
