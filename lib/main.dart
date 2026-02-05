@@ -1,9 +1,15 @@
-import 'package:dragon_ball_app/app/features/characters/pages/home_page.dart';
+import 'package:dragon_ball_app/app/controllers/character_controller.dart';
 import 'package:flutter/material.dart';
-import 'app/core/theme/app_theme.dart';
+import 'app/features/characters/pages/home_page.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => CharacterController(),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -13,7 +19,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.theme,
+      title: 'Dragon Ball App',
       home: const HomePage(),
     );
   }

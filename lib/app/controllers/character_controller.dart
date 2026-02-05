@@ -3,22 +3,23 @@ import 'package:dragon_ball_app/app/features/characters/services/dragonball_char
 import 'package:flutter/material.dart';
 
 class CharacterController extends ChangeNotifier {
-  final CharacterService _service = CharacterService();
-  List<CharacterModel> _characters = [];
-  bool _isLoading = false;
-  String? _errorMessage;
+  bool isLoading = false;
+  String? errorMessage;
+  List<CharacterModel> characters = [];
+  final CharacterService service = CharacterService();
 
   Future<void> fetchCharacters() async {
-    _isLoading = true;
-    _errorMessage = null;
+    isLoading = true;
     notifyListeners();
 
     try {
-      _characters = await _service.getCharacters();
+      characters = await service.getCharacters();
+      errorMessage = null;
     } catch (e) {
-      _errorMessage = 'Erro ao carregar personagens: $e';
+      errorMessage = 'Erro ao buscar personagens';
     }
-    _isLoading = false;
+
+    isLoading = false;
     notifyListeners();
   }
 }
