@@ -1,7 +1,7 @@
 import 'package:dragon_ball_app/app/controllers/character_controller.dart';
+import 'package:dragon_ball_app/app/features/characters/widgets/character_card.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -46,7 +46,7 @@ class _HomePageState extends State<HomePage> {
             itemBuilder: (context, index) {
               final character = controller.characters[index];
 
-              return ListTile(title: Text(character.name));
+              return CharacterCard(character: character);
             },
           );
         },
