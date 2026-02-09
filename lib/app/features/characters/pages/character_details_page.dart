@@ -32,7 +32,7 @@ class CharacterDetailsPage extends StatelessWidget {
                       child: Image.network(
                         character.image,
                         fit: BoxFit.contain,
-                        errorBuilder: (_, __, ___) {
+                        errorBuilder: (context, error, stackTrace) {
                           return const Icon(
                             Icons.person,
                             size: 60,

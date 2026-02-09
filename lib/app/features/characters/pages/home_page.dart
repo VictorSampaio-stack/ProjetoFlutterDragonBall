@@ -16,7 +16,7 @@ class _HomePageState extends State<HomePage> {
     super.initState();
 
     // Chama a API assim que a tela abre
-    Future.microtask(() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<CharacterController>().fetchCharacters();
     });
   }
@@ -26,13 +26,12 @@ class _HomePageState extends State<HomePage> {
     final controller = context.watch<CharacterController>();
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Dragon Ball')),
       body: Builder(
         builder: (_) {
           if (controller.isLoading) {
             return ListView.builder(
               itemCount: 6,
-              itemBuilder: (_, __) {
+              itemBuilder: (context, index) {
                 return Card(
                   margin: const EdgeInsets.symmetric(
                     horizontal: 12,

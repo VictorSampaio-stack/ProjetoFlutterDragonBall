@@ -1,14 +1,17 @@
+import 'package:dragon_ball_app/app/controllers/favorites_controller.dart';
 import 'package:dragon_ball_app/app/features/characters/pages/character_details_page.dart';
 import 'package:flutter/material.dart';
 import '../models/character_model.dart';
+import 'package:provider/provider.dart';
 
 class CharacterCard extends StatelessWidget {
   final CharacterModel character;
-
   const CharacterCard({super.key, required this.character});
 
   @override
   Widget build(BuildContext context) {
+    final favoritesController = context.watch<FavoritesController>();
+    final isFavorite = favoritesController.isFavorite(character);
     return InkWell(
       borderRadius: BorderRadius.circular(12),
       onTap: () {
@@ -37,10 +40,10 @@ class CharacterCard extends StatelessWidget {
                     width: 100,
                     height: 120,
                     color: const Color(0xFFF2F2F2),
-                    child: Image.network(
+                      child: Image.network(
                       character.image,
                       fit: BoxFit.contain,
-                      errorBuilder: (_, __, ___) {
+                      errorBuilder: (context, error, stackTrace) {
                         return const Icon(
                           Icons.person,
                           size: 40,
@@ -76,6 +79,15 @@ class CharacterCard extends StatelessWidget {
                     ),
                   ],
                 ),
+              ),
+              IconButton(
+                icon: Icon(
+                  isFavorite ? Icons.star : Icons.star_border,
+                  color: isFavorite ? Colors.amber : Colors.grey,
+                ),
+                onPressed: () {
+                  favoritesController.toggleFavorite(character);
+                },
               ),
             ],
           ),
