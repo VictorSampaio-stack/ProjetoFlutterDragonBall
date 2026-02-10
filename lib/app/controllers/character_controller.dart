@@ -30,4 +30,12 @@ class CharacterController extends ChangeNotifier {
     isLoading = false;
     notifyListeners();
   }
+
+  Future<CharacterModel> fetchCharacterById(int id) async {
+    try {
+      return await service.fetchCharacterById(id);
+    } catch (e) {
+      throw Exception('Erro ao buscar personagem por id');
+    }
+  }
 }

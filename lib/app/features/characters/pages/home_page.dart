@@ -78,6 +78,7 @@ class _HomePageState extends State<HomePage> {
               },
             );
           }
+
           if (controller.errorMessage != null) {
             return Center(
               child: Padding(

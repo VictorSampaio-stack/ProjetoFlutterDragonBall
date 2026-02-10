@@ -1,3 +1,5 @@
+import 'transformation_model.dart';
+
 class CharacterModel {
   final int id;
   final String name;
@@ -8,6 +10,7 @@ class CharacterModel {
   final String description;
   final String image;
   final String affiliation;
+  final List<TransformationModel> transformations;
 
   CharacterModel({
     required this.id,
@@ -19,6 +22,7 @@ class CharacterModel {
     required this.description,
     required this.image,
     required this.affiliation,
+    required this.transformations,
   });
 
   factory CharacterModel.fromMap(Map<String, dynamic> map) {
@@ -32,6 +36,11 @@ class CharacterModel {
       description: map['description'],
       image: map['image'],
       affiliation: map['affiliation'],
+      transformations:
+          (map['transformations'] as List<dynamic>?)
+              ?.map((e) => TransformationModel.fromMap(e))
+              .toList() ??
+          [],
     );
   }
 }

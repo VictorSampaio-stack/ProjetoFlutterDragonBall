@@ -18,4 +18,13 @@ class CharacterService {
       throw Exception('Erro ao buscar personagens');
     }
   }
+
+  Future<CharacterModel> fetchCharacterById(int id) async {
+    final response = await http.get(
+      Uri.parse('https://dragonball-api.com/api/characters/$id'),
+    );
+
+    final data = jsonDecode(response.body);
+    return CharacterModel.fromMap(data);
+  }
 }
