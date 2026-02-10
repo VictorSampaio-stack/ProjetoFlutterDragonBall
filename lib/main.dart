@@ -10,8 +10,11 @@ void main() {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => CharacterController()),
         ChangeNotifierProvider(create: (_) => FavoritesController()),
+        ChangeNotifierProvider(
+          create: (context) =>
+              CharacterController(context.read<FavoritesController>()),
+        ),
       ],
       child: const MyApp(),
     ),

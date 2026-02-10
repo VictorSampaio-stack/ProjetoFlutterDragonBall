@@ -36,6 +36,7 @@ dependencies:
   cupertino_icons: ^1.0.8
   provider: ^6.0.5
   http: ^1.6.0
+  shared_preferences: ^2.2.2
 
 dev_dependencies:
   flutter_test:
@@ -89,3 +90,4 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+  # shared_preferences: ^2.2.2
