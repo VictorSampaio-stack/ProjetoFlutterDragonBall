@@ -1,3 +1,4 @@
+import 'package:dragon_ball_app/app/shared/translations/pt_br_translations.dart';
 import 'transformation_model.dart';
 
 class CharacterModel {
@@ -43,4 +44,11 @@ class CharacterModel {
           [],
     );
   }
+
+  /// 🔥 TRADUÇÃO PARA PORTUGUÊS-BR
+  String get racePtBr => PtBrTranslations.translateRace(race);
+  String get genderPtBr => PtBrTranslations.translateGender(gender);
+  String get affiliationPtBr => PtBrTranslations.translateAffiliation(affiliation);
+  String get kiPtBr => PtBrTranslations.translateNumberPtBr(ki);
+  String get maxKiPtBr => PtBrTranslations.translateNumberPtBr(maxKi);
 }

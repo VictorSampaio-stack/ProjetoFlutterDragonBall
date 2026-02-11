@@ -1,5 +1,6 @@
 import 'package:dragon_ball_app/app/controllers/character_controller.dart';
 import 'package:dragon_ball_app/app/features/characters/models/character_model.dart';
+import 'package:dragon_ball_app/app/shared/translations/pt_br_translations.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -49,11 +50,22 @@ class _CharacterDetailsPageState extends State<CharacterDetailsPage> {
             ? character.ki
             : character.transformations[currentPage - 1].ki;
 
+        // Importar PtBrTranslations para tradução
+        final String displayedKiPtBr =
+            currentPage == 0
+            ? character.kiPtBr
+            : PtBrTranslations.translateNumberPtBr(
+                character.transformations[currentPage - 1].ki);
+
         return Scaffold(
           appBar: AppBar(
-            title: Text(character.name),
+            title: Text(
+              character.name,
+              style: const TextStyle(color: Colors.white),
+            ),
             centerTitle: true,
             backgroundColor: const Color.fromARGB(255, 22, 0, 133),
+            iconTheme: const IconThemeData(color: Colors.white),
           ),
           body: SingleChildScrollView(
             child: Padding(
@@ -89,11 +101,11 @@ class _CharacterDetailsPageState extends State<CharacterDetailsPage> {
                             ),
                           ),
                           const SizedBox(height: 12),
-                          _infoRow('Raça', character.race),
-                          _infoRow('Gênero', character.gender),
-                          _infoRow('Afiliação', character.affiliation),
-                          _infoRow('Ki', displayedKi), // 🔥 AQUI
-                          _infoRow('Ki Máximo', character.maxKi),
+                          _infoRow('Raça', character.racePtBr),
+                          _infoRow('Gênero', character.genderPtBr),
+                          _infoRow('Afiliação', character.affiliationPtBr),
+                          _infoRow('Ki', displayedKiPtBr),
+                          _infoRow('Ki Máximo', character.maxKiPtBr),
                         ],
                       ),
                     ),
@@ -128,11 +140,18 @@ class _CharacterDetailsPageState extends State<CharacterDetailsPage> {
             return Center(
               child: Hero(
                 tag: character.id,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(16),
-                  child: Container(
-                    width: 220,
+                child: Container(
+                  width: 220,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: const Color.fromARGB(255, 0, 0, 0),
+                      width: 3,
+                    ),
                     color: const Color(0xFFF2F2F2),
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(13),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -164,11 +183,18 @@ class _CharacterDetailsPageState extends State<CharacterDetailsPage> {
           return Center(
             child: Hero(
               tag: '${character.id}-${transformation.name}',
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(16),
-                child: Container(
-                  width: 220,
+              child: Container(
+                width: 220,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                    color: const Color.fromARGB(255, 0, 0, 0),
+                    width: 3,
+                  ),
                   color: const Color(0xFFF2F2F2),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(13),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
