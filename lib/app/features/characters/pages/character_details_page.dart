@@ -1,3 +1,5 @@
+import 'package:provider/provider.dart';
+import 'package:dragon_ball_app/app/controllers/favorites_controller.dart';
 import 'package:dragon_ball_app/app/controllers/character_controller.dart';
 import 'package:dragon_ball_app/app/features/characters/models/character_model.dart';
 import 'package:dragon_ball_app/app/shared/translations/pt_br_translations.dart';
@@ -9,6 +11,7 @@ class CharacterDetailsPage extends StatefulWidget {
 
   const CharacterDetailsPage({super.key, required this.character});
 
+  // Removido: o estado de favorito deve ficar no State
   @override
   State<CharacterDetailsPage> createState() => _CharacterDetailsPageState();
 }
@@ -16,14 +19,22 @@ class CharacterDetailsPage extends StatefulWidget {
 class _CharacterDetailsPageState extends State<CharacterDetailsPage> {
   int currentPage = 0;
   late Future<CharacterModel> _futureCharacter;
+  // Removido: favoritos agora via controller
 
   @override
   void initState() {
     super.initState();
-
     _futureCharacter = context.read<CharacterController>().fetchCharacterById(
       widget.character.id,
     );
+  }
+
+  String _getCurrentFavoriteId(CharacterModel character) {
+    if (currentPage == 0) {
+      return 'base_${character.id}';
+    } else {
+      return 'evo_${character.id}_${character.transformations[currentPage - 1].name}';
+    }
   }
 
   @override
@@ -50,12 +61,10 @@ class _CharacterDetailsPageState extends State<CharacterDetailsPage> {
             ? character.ki
             : character.transformations[currentPage - 1].ki;
 
-        // Importar PtBrTranslations para tradução
-        final String displayedKiPtBr =
-            currentPage == 0
+        // Tradução para evoluções
+        final String displayedKiPtBr = currentPage == 0
             ? character.kiPtBr
-            : PtBrTranslations.translateNumberPtBr(
-                character.transformations[currentPage - 1].ki);
+            : PtBrTranslations.translateNumberPtBr(character.transformations[currentPage - 1].ki);
 
         return Scaffold(
           appBar: AppBar(
@@ -75,9 +84,72 @@ class _CharacterDetailsPageState extends State<CharacterDetailsPage> {
                 children: [
                   /// 🔥 IMAGEM / TRANSFORMAÇÕES
                   _buildCharacterImage(character),
-
+                  const SizedBox(height: 12),
+                  Center(
+                    child: Consumer<FavoritesController>(
+                      builder: (context, favoritesController, _) {
+                        final isFavorite = currentPage == 0
+                          ? favoritesController.isFavorite(character, onlyBase: true)
+                          : favoritesController.isFavorite(
+                              CharacterModel(
+                                id: character.id,
+                                name: character.transformations[currentPage - 1].name,
+                                image: character.transformations[currentPage - 1].image,
+                                race: character.race,
+                                gender: character.gender,
+                                affiliation: character.affiliation,
+                                ki: character.transformations[currentPage - 1].ki,
+                                maxKi: character.maxKi,
+                                description: character.description,
+                                transformations: [],
+                              ),
+                            );
+                        return ElevatedButton.icon(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: isFavorite ? Colors.redAccent : Colors.blueAccent,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                          ),
+                          icon: Icon(
+                            isFavorite ? Icons.favorite : Icons.favorite_border,
+                            color: Colors.white,
+                            size: 28,
+                          ),
+                          label: Text(
+                            isFavorite ? 'Desfavoritar' : 'Favoritar',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
+                          onPressed: () {
+                            if (currentPage == 0) {
+                              favoritesController.toggleFavorite(character, onlyBase: true);
+                            } else {
+                              final evo = character.transformations[currentPage - 1];
+                              final evoCharacter = CharacterModel(
+                                id: character.id,
+                                name: evo.name,
+                                image: evo.image,
+                                race: character.race,
+                                gender: character.gender,
+                                affiliation: character.affiliation,
+                                ki: evo.ki,
+                                maxKi: character.maxKi,
+                                description: character.description,
+                                transformations: [],
+                              );
+                              favoritesController.toggleFavorite(evoCharacter);
+                            }
+                          },
+                        );
+                      },
+                    ),
+                  ),
                   const SizedBox(height: 24),
-
                   /// 🔥 CARD DE INFORMAÇÕES
                   Card(
                     elevation: 3,
@@ -106,6 +178,9 @@ class _CharacterDetailsPageState extends State<CharacterDetailsPage> {
                           _infoRow('Afiliação', character.affiliationPtBr),
                           _infoRow('Ki', displayedKiPtBr),
                           _infoRow('Ki Máximo', character.maxKiPtBr),
+                          const SizedBox(height: 8),
+                          // Descrição com limite de 10 linhas e botão para expandir
+                          _buildDescription(character.description),
                         ],
                       ),
                     ),
@@ -220,6 +295,73 @@ class _CharacterDetailsPageState extends State<CharacterDetailsPage> {
             ),
           );
         },
+      ),
+    );
+  }
+
+  // Estado para controlar exibição da descrição
+  bool _showFullDescription = false;
+
+  bool _isDescriptionLong(String description) {
+    final lineCount = description.split('\n').length;
+    // Reduz limite de caracteres para 300 para garantir botão em textos longos
+    return lineCount > 7 || description.length > 300;
+  }
+
+  Widget _buildDescription(String description) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 110,
+            child: Text(
+              'Descrição:',
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF1A237E),
+              ),
+            ),
+          ),
+          Expanded(
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final span = TextSpan(
+                  text: description.isNotEmpty ? description : '-',
+                  style: DefaultTextStyle.of(context).style,
+                );
+                final tp = TextPainter(
+                  text: span,
+                  maxLines: _showFullDescription ? null : 7,
+                  textDirection: TextDirection.ltr,
+                )..layout(maxWidth: constraints.maxWidth);
+                final isOverflowing = tp.didExceedMaxLines;
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      description.isNotEmpty ? description : '-',
+                      maxLines: _showFullDescription ? null : 7,
+                      overflow: _showFullDescription
+                          ? TextOverflow.visible
+                          : TextOverflow.ellipsis,
+                    ),
+                    if (isOverflowing || _showFullDescription)
+                      TextButton(
+                        onPressed: () {
+                          setState(() {
+                            _showFullDescription = !_showFullDescription;
+                          });
+                        },
+                        child: Text(_showFullDescription ? 'Exibir menos' : 'Exibir mais'),
+                      ),
+                  ],
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }

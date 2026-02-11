@@ -11,7 +11,7 @@ class CharacterCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final favoritesController = context.watch<FavoritesController>();
-    final isFavorite = favoritesController.isFavorite(character);
+    final isFavorite = favoritesController.isFavorite(character, onlyBase: true);
     return InkWell(
       borderRadius: BorderRadius.circular(12),
       onTap: () {
@@ -86,7 +86,7 @@ class CharacterCard extends StatelessWidget {
                   color: isFavorite ? Colors.amber : Colors.grey,
                 ),
                 onPressed: () {
-                  favoritesController.toggleFavorite(character);
+                  favoritesController.toggleFavorite(character, onlyBase: true);
                 },
               ),
             ],
