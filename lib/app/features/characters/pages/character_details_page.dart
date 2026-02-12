@@ -381,6 +381,7 @@ class _CharacterDetailsPageState extends State<CharacterDetailsPage> {
                 color: Color(0xFF1A237E),
               ),
             ),
+            // TODO: Traduzir descrição para pt-br 
           ),
           Expanded(
             child: LayoutBuilder(

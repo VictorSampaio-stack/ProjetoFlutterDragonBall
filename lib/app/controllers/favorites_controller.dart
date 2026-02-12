@@ -32,7 +32,8 @@ class FavoritesController extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Carrega favoritos salvos (recebe lista da API)
+  /// Carrega favoritos salvos (recebe lista da API) 
+  /// TODO: resolver bug ao sair e voltar da tela, as evoluções desaparecem dos favoritos, mesmo estando salvas.
   Future<void> loadFavorites(List<CharacterModel> allCharacters) async {
     final prefs = await SharedPreferences.getInstance();
     final savedKeys = prefs.getStringList(_storageKey) ?? [];
