@@ -64,7 +64,9 @@ class _CharacterDetailsPageState extends State<CharacterDetailsPage> {
         // Tradução para evoluções
         final String displayedKiPtBr = currentPage == 0
             ? character.kiPtBr
-            : PtBrTranslations.translateNumberPtBr(character.transformations[currentPage - 1].ki);
+            : PtBrTranslations.translateNumberPtBr(
+                character.transformations[currentPage - 1].ki,
+              );
 
         return Scaffold(
           appBar: AppBar(
@@ -89,28 +91,42 @@ class _CharacterDetailsPageState extends State<CharacterDetailsPage> {
                     child: Consumer<FavoritesController>(
                       builder: (context, favoritesController, _) {
                         final isFavorite = currentPage == 0
-                          ? favoritesController.isFavorite(character, onlyBase: true)
-                          : favoritesController.isFavorite(
-                              CharacterModel(
-                                id: character.id,
-                                name: character.transformations[currentPage - 1].name,
-                                image: character.transformations[currentPage - 1].image,
-                                race: character.race,
-                                gender: character.gender,
-                                affiliation: character.affiliation,
-                                ki: character.transformations[currentPage - 1].ki,
-                                maxKi: character.maxKi,
-                                description: character.description,
-                                transformations: [],
-                              ),
-                            );
+                            ? favoritesController.isFavorite(
+                                character,
+                                onlyBase: true,
+                              )
+                            : favoritesController.isFavorite(
+                                CharacterModel(
+                                  id: character.id,
+                                  name: character
+                                      .transformations[currentPage - 1]
+                                      .name,
+                                  image: character
+                                      .transformations[currentPage - 1]
+                                      .image,
+                                  race: character.race,
+                                  gender: character.gender,
+                                  affiliation: character.affiliation,
+                                  ki: character
+                                      .transformations[currentPage - 1]
+                                      .ki,
+                                  maxKi: character.maxKi,
+                                  description: character.description,
+                                  transformations: [],
+                                ),
+                              );
                         return ElevatedButton.icon(
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: isFavorite ? Colors.redAccent : Colors.blueAccent,
+                            backgroundColor: isFavorite
+                                ? Colors.redAccent
+                                : Colors.blueAccent,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
-                            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 24,
+                              vertical: 12,
+                            ),
                           ),
                           icon: Icon(
                             isFavorite ? Icons.favorite : Icons.favorite_border,
@@ -127,9 +143,13 @@ class _CharacterDetailsPageState extends State<CharacterDetailsPage> {
                           ),
                           onPressed: () {
                             if (currentPage == 0) {
-                              favoritesController.toggleFavorite(character, onlyBase: true);
+                              favoritesController.toggleFavorite(
+                                character,
+                                onlyBase: true,
+                              );
                             } else {
-                              final evo = character.transformations[currentPage - 1];
+                              final evo =
+                                  character.transformations[currentPage - 1];
                               final evoCharacter = CharacterModel(
                                 id: character.id,
                                 name: evo.name,
@@ -150,6 +170,7 @@ class _CharacterDetailsPageState extends State<CharacterDetailsPage> {
                     ),
                   ),
                   const SizedBox(height: 24),
+
                   /// 🔥 CARD DE INFORMAÇÕES
                   Card(
                     elevation: 3,
@@ -231,11 +252,11 @@ class _CharacterDetailsPageState extends State<CharacterDetailsPage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Expanded(
-                          child: Image.network(
-                            character.image,
-                            fit: BoxFit.contain,
-                          ),
-                        ),
+                                child: Image.network(
+                                  character.image,
+                                  fit: BoxFit.contain,
+                                ),
+                              ),
                         const SizedBox(height: 8),
                         Text(
                           character.name,
@@ -354,7 +375,9 @@ class _CharacterDetailsPageState extends State<CharacterDetailsPage> {
                             _showFullDescription = !_showFullDescription;
                           });
                         },
-                        child: Text(_showFullDescription ? 'Exibir menos' : 'Exibir mais'),
+                        child: Text(
+                          _showFullDescription ? 'Exibir menos' : 'Exibir mais',
+                        ),
                       ),
                   ],
                 );
