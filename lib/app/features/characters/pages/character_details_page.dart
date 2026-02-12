@@ -4,22 +4,20 @@ import 'package:dragon_ball_app/app/controllers/character_controller.dart';
 import 'package:dragon_ball_app/app/features/characters/models/character_model.dart';
 import 'package:dragon_ball_app/app/shared/translations/pt_br_translations.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class CharacterDetailsPage extends StatefulWidget {
   final CharacterModel character;
 
   const CharacterDetailsPage({super.key, required this.character});
 
-  // Removido: o estado de favorito deve ficar no State
   @override
   State<CharacterDetailsPage> createState() => _CharacterDetailsPageState();
 }
 
 class _CharacterDetailsPageState extends State<CharacterDetailsPage> {
+  final PageController _pageController = PageController(viewportFraction: 0.8);
   int currentPage = 0;
   late Future<CharacterModel> _futureCharacter;
-  // Removido: favoritos agora via controller
 
   @override
   void initState() {
@@ -221,101 +219,140 @@ class _CharacterDetailsPageState extends State<CharacterDetailsPage> {
 
     return SizedBox(
       height: 260,
-      child: PageView.builder(
-        controller: PageController(viewportFraction: 0.8),
-        onPageChanged: (index) {
-          setState(() {
-            currentPage = index;
-          });
-        },
-        itemCount: hasTransformations
-            ? character.transformations.length + 1
-            : 1,
-        itemBuilder: (context, index) {
-          if (index == 0) {
-            return Center(
-              child: Hero(
-                tag: character.id,
-                child: Container(
-                  width: 220,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                      color: const Color.fromARGB(255, 0, 0, 0),
-                      width: 3,
-                    ),
-                    color: const Color(0xFFF2F2F2),
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(13),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Expanded(
-                                child: Image.network(
-                                  character.image,
-                                  fit: BoxFit.contain,
-                                ),
+      child: Stack(
+        children: [
+          PageView.builder(
+            controller: _pageController,
+            onPageChanged: (index) {
+              setState(() {
+                currentPage = index;
+              });
+            },
+            itemCount: hasTransformations
+                ? character.transformations.length + 1
+                : 1,
+            itemBuilder: (context, index) {
+              if (index == 0) {
+                return Center(
+                  child: Hero(
+                    tag: character.id,
+                    child: Container(
+                      width: 220,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: const Color.fromARGB(255, 0, 0, 0),
+                          width: 3,
+                        ),
+                        color: const Color(0xFFF2F2F2),
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(13),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Expanded(
+                              child: Image.network(
+                                character.image,
+                                fit: BoxFit.contain,
                               ),
-                        const SizedBox(height: 8),
-                        Text(
-                          character.name,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              character.name,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                          ],
                         ),
-                        const SizedBox(height: 12),
-                      ],
+                      ),
+                    ),
+                  ),
+                );
+              }
+
+              final transformation = character.transformations[index - 1];
+
+              return Center(
+                child: Hero(
+                  tag: '${character.id}-${transformation.name}',
+                  child: Container(
+                    width: 220,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: const Color.fromARGB(255, 0, 0, 0),
+                        width: 3,
+                      ),
+                      color: const Color(0xFFF2F2F2),
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(13),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Expanded(
+                            child: Image.network(
+                              transformation.image,
+                              fit: BoxFit.contain,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            transformation.name,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-            );
-          }
+              );
+            },
+          ),
 
-          final transformation = character.transformations[index - 1];
-
-          return Center(
-            child: Hero(
-              tag: '${character.id}-${transformation.name}',
-              child: Container(
-                width: 220,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(
-                    color: const Color.fromARGB(255, 0, 0, 0),
-                    width: 3,
-                  ),
-                  color: const Color(0xFFF2F2F2),
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(13),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Expanded(
-                        child: Image.network(
-                          transformation.image,
-                          fit: BoxFit.contain,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        transformation.name,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                    ],
-                  ),
-                ),
+          /// 🔥 SETA ESQUERDA
+          if (currentPage > 0)
+            Positioned(
+              left: 0,
+              top: 0,
+              bottom: 0,
+              child: IconButton(
+                icon: const Icon(Icons.arrow_back_ios, size: 30),
+                onPressed: () {
+                  _pageController.previousPage(
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
+                  );
+                },
               ),
             ),
-          );
-        },
+
+          /// 🔥 SETA DIREITA
+          if (hasTransformations &&
+              currentPage < character.transformations.length)
+            Positioned(
+              right: 0,
+              top: 0,
+              bottom: 0,
+              child: IconButton(
+                icon: const Icon(Icons.arrow_forward_ios, size: 30),
+                onPressed: () {
+                  _pageController.nextPage(
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
+                  );
+                },
+              ),
+            ),
+        ],
       ),
     );
   }
